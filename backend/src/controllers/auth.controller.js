@@ -46,7 +46,9 @@ export async function signup(req, res) {
       console.log("Error creating Stream user:", error);
     }
 
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY, {
+    // Use a fallback secret in case JWT_SECRET_KEY isn't set to avoid 500s in demo/deployed envs
+    const jwtSecret = process.env.JWT_SECRET_KEY || "__DEMO_ONLY_CHANGE_ME__";
+    const token = jwt.sign({ userId: newUser._id }, jwtSecret, {
       expiresIn: "7d",
     });
 
@@ -78,7 +80,9 @@ export async function login(req, res) {
     const isPasswordCorrect = await user.matchPassword(password);
     if (!isPasswordCorrect) return res.status(401).json({ message: "Invalid email or password" });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
+    // Use a fallback secret in case JWT_SECRET_KEY isn't set to avoid 500s in demo/deployed envs
+    const jwtSecret = process.env.JWT_SECRET_KEY || "__DEMO_ONLY_CHANGE_ME__";
+    const token = jwt.sign({ userId: user._id }, jwtSecret, {
       expiresIn: "7d",
     });
 
